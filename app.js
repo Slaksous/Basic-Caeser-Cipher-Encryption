@@ -1,21 +1,37 @@
 var normal = "abcdefghijklmnopqrstuvwxyz"; //The original order of the english alphabet
 var cipher = ""; //This will become the encrypted mapping
-var sentence = "Hi there my name is Lloyd"; // whatever you would like to encrypt
-var shift = 5; // whatever you would like to shift key to
-var words = sentence.split(" "); //This takes the string from sentence and cuts it into a array words, cutting takes place where there are spaces
 
-// ENCTRYPTION FUNCTION -  This function will handle all the encryption and return encrypted string
+//USER INPUT ===================================================================================================
+const readline = require("readline");
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
+
+rl.question("Would you like to encrypt of decrypt (e/d) ? ", function(option) {
+    rl.question("What Key to use:", function(shiftKey) {
+        rl.question("String you would like to convert: ", function(str) {
+            words = str.split(" ");
+            if(option === 'e') {
+                console.log('encryption');
+                console.log(encrypt(words, shiftKey));
+            }
+            else if(option === 'd') {
+                console.log('decryption');
+                console.log(decrypt(words, shiftKey));
+            }
+            rl.close();
+        });
+    }); 
+});
+//===============================================================================================================
+
+// ENCTRYPTION FUNCTION =========================================================================================
 function encrypt(array, key) {
     var dummy = "";
-    
-    if(key < 1 && key > 26) {
-        console.log("No encryption will take place please try again {incorrect input: 1:26}");
-    }
-    else {
-        cipher = cipher + normal.slice(key) + normal.slice(0,key);
-    }
+    createCipher(key); //making new cipher based on key
 
-    words.forEach(function(word) {
+    words.forEach(function(word) { //building of encrypted string
         for(var i = 0; i < word.length; i++) {
             dummy = dummy + cipher[normal.indexOf(word[i].toLowerCase())];
         }  
@@ -24,7 +40,31 @@ function encrypt(array, key) {
 
     return dummy;
 }
+//===============================================================================================================
 
+// DECRYPTION FUNCTION ==========================================================================================
+function decrypt(array, key) {
+    var dummy = ""; 
+    createCipher(key); //making new cipher based on key
 
-//Calling of the ENCRYPT function to encrypt your sentence with the needed key
-console.log(encrypt(words,shift));
+    words.forEach(function(word) { //building of normal string
+        for(var i = 0; i < word.length; i++) {
+            dummy = dummy + normal[cipher.indexOf(word[i].toLowerCase())];
+        }  
+        dummy = dummy + " ";   
+    });
+    return dummy; //final normal string
+}
+//===============================================================================================================
+
+// CREATE CIPHER FUNCTION =======================================================================================
+function createCipher(key) {
+    if(key < 1 && key > 26) { //checking that key is not less than 1 or more than 26
+        console.log("No encryption will take place please try again {incorrect input: 1:26}");
+    }
+    else { // building of cipher
+        cipher = cipher + normal.slice(key) + normal.slice(0,key);
+    }
+}
+//===============================================================================================================
+
